@@ -1,0 +1,45 @@
+---
+hosts:
+- hostname: "b3b01"
+  babel_id: "3"
+  deployment_id: "1"
+  environment: "production"
+  role: "backend"
+  address: "1.2.3.4"
+  pools:
+  - one
+  - two
+  - three
+
+- hostname: "b3b02"
+  babel_id: "3"
+  deployment_id: "1"
+  environment: "production"
+  role: "backend"
+  address: "1.2.3.5"
+  pools:
+
+- hostname: "staging-frontend1"
+  babel_id: "3"
+  deployment_id: "2"
+  environment: "staging"
+  role: "frontend"
+  address: "1.2.4.5"
+  pools:
+
+- hostname: "staging-backend1"
+  babel_id: "3"
+  deployment_id: "2"
+  environment: "staging"
+  role: "backend"
+  address: "1.2.4.6"
+  pools:
+
+defaults:
+  production:
+    backend:
+      pools:
+      - "one"
+      - "two"
+      - "three"
+
