@@ -54,6 +54,6 @@ OptionParser.new do |opts|
   end
 end.parse!(ARGV)
 
-inv = StaticInventory.new( YAML.load(File.read(File.join(File.dirname(__FILE__), 'p.yaml'))) )
+inv = StaticInventory.new( YAML.load(File.read(File.join(File.dirname(__FILE__), 'inventory.yaml'))) )
 print inv.list.to_json if options[:list]
 
