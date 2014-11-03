@@ -2,12 +2,22 @@
 
 require 'json'
 require 'yaml'
-require 'pp'
+require 'optparse'
 
 class StaticInventory
   def initialize(config)
     @config = config
-    @hosts = Hash.new { |k,v| k[v] = {} }
+    @inventory = {}
+  end
+
+  def _add_host_by_attribute(key, value, host)
+    if value.is_a?(Array)
+      value.each { |x| _add_host_by_attribute(key, x, host) }
+      return
+    end
+    identifier = "#{key}_#{value}"
+    @inventory[ identifier ] ||= { 'hosts' => [] }
+    @inventory[ identifier ]['hosts'] << host
   end
 
   def list
@@ -27,24 +37,23 @@ class StaticInventory
         end
     
         next if h[attribute].nil?
-    
-        if h[attribute].is_a?(Array)
-          h[attribute].each do |value|
-            @hosts[attribute][ value ] ||= []
-            @hosts[attribute][ value ] << address
-          end
-          next
-        end
 
-        @hosts[ attribute ][ h[attribute] ] ||= []
-        @hosts[ attribute ][ h[attribute] ] << address
+        _add_host_by_attribute(attribute, h[attribute], address)
       end
     end
 
-  return @hosts
+  return @inventory
   end
 end
 
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{opts.program_name} [options]"
+  opts.on("--list", "List hosts") do |o|
+    options[:list] = o
+  end
+end.parse!(ARGV)
+
 inv = StaticInventory.new( YAML.load(File.read(File.join(File.dirname(__FILE__), 'p.yaml'))) )
-print inv.list.to_json if ARGV.shift == '--list'
+print inv.list.to_json if options[:list]
 
