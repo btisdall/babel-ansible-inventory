@@ -4,41 +4,60 @@ hosts:
   babel_id: "3"
   deployment_id: "1"
   environment: "production"
-  role: "backend"
+  role:
+  - "backend"
   address: "1.2.3.4"
-  pools:
-  - one
-  - two
-  - three
+  pool:
 
 - hostname: "b3b02"
   babel_id: "3"
   deployment_id: "1"
   environment: "production"
-  role: "backend"
+  role:
+  - "backend"
   address: "1.2.3.5"
-  pools:
+  pool:
+
+- hostname: "b3f01"
+  babel_id: "3"
+  deployment_id: "1"
+  environment: "production"
+  role:
+  - "frontend"
+  address: "1.3.3.4"
+  pool:
+
+- hostname: "b3f02"
+  babel_id: "3"
+  deployment_id: "1"
+  environment: "production"
+  role:
+  - "frontend"
+  address: "1.3.3.5"
+  pool:
 
 - hostname: "staging-frontend1"
   babel_id: "3"
   deployment_id: "2"
   environment: "staging"
-  role: "frontend"
+  role:
+  - "frontend"
   address: "1.2.4.5"
-  pools:
+  pool:
 
 - hostname: "staging-backend1"
   babel_id: "3"
   deployment_id: "2"
   environment: "staging"
-  role: "backend"
+  role:
+  - "backend"
   address: "1.2.4.6"
-  pools:
+  pool:
 
 defaults:
   production:
     backend:
-      pools:
+      pool:
       - "one"
       - "two"
       - "three"
