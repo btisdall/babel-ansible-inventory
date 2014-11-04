@@ -24,7 +24,7 @@ class StaticInventory
     @config['hosts'].each do |h|
       h.keys.each do |attribute|
     
-        next unless address = h['address']
+        next unless hostname = h['hostname']
 
         if h[attribute].nil? && h['environment'] && h['role']
           default = 
@@ -38,7 +38,7 @@ class StaticInventory
     
         next if h[attribute].nil?
 
-        _add_host_by_attribute(attribute, h[attribute], address)
+        _add_host_by_attribute(attribute, h[attribute], hostname)
       end
     end
 
