@@ -5,8 +5,7 @@ hosts:
   babel_id: "3"
   deployment_id: "1"
   environment: "production"
-  role:
-  - "backend"
+  role: "backend"
   pool:
 
 - hostname: "1.2.3.5"
@@ -14,8 +13,7 @@ hosts:
   babel_id: "3"
   deployment_id: "1"
   environment: "production"
-  role:
-  - "backend"
+  role: "backend"
   pool:
 
 - hostname: "1.3.3.4"
@@ -23,8 +21,7 @@ hosts:
   babel_id: "3"
   deployment_id: "1"
   environment: "production"
-  role:
-  - "frontend"
+  role: "frontend"
   pool:
 
 - hostname: "1.3.3.5"
@@ -32,8 +29,7 @@ hosts:
   babel_id: "3"
   deployment_id: "1"
   environment: "production"
-  role:
-  - "frontend"
+  role: "frontend"
   pool:
 
 - hostname: "1.2.4.5"
@@ -41,8 +37,7 @@ hosts:
   babel_id: "3"
   deployment_id: "2"
   environment: "staging"
-  role:
-  - "frontend"
+  role: "frontend"
   pool:
 
 - hostname: "1.2.4.6"
@@ -50,15 +45,18 @@ hosts:
   babel_id: "3"
   deployment_id: "2"
   environment: "staging"
-  role:
-  - "backend"
+  role: "backend"
   pool:
 
 defaults:
   production:
     backend:
       pool:
-      - "one"
-      - "two"
-      - "three"
-
+      - name: "one"
+        port: "80"
+        conn: "20"
+        weight: "100"
+      - name: "two"
+        port: "8080"
+        conn: "20"
+        weight: "200"

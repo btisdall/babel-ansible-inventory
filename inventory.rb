@@ -10,35 +10,36 @@ class StaticInventory
     @inventory = {}
   end
 
-  def _add_host_by_attribute(key, value, host)
-    if value.is_a?(Array)
-      value.each { |x| _add_host_by_attribute(key, x, host) }
-      return
+  def _make_concat_ids(key, val)
+    return [ "#{key}_#{val}" ] if val.is_a?(String)
+    if val.is_a?(Array)
+      return val.map { |x| _make_concat_ids(key, x) }.flatten
     end
-    identifier = "#{key}_#{value}"
-    @inventory[ identifier ] ||= { 'hosts' => [] }
-    @inventory[ identifier ]['hosts'] << host
+    if val.is_a?(Hash)
+      return val.map { |x,y| _make_concat_ids("#{key}_#{x}", y) }.flatten
+    end
   end
 
   def list
     @config['hosts'].each do |h|
+      next unless hostname = h['hostname']
       h.keys.each do |attribute|
-    
-        next unless hostname = h['hostname']
 
         if h[attribute].nil? && h['environment'] && h['role']
-          default = 
+          h[attribute] =
             begin
               @config['defaults'][ h['environment'] ][ h['role'] ][attribute]
             rescue
-              false
+              next
             end
-          next unless h[attribute] = default
         end
-    
+
         next if h[attribute].nil?
 
-        _add_host_by_attribute(attribute, h[attribute], hostname)
+        _make_concat_ids(attribute, h[attribute]).each do |id|
+          @inventory[id] ||= { 'hosts' => [] }
+          @inventory[id]['hosts'] << hostname
+        end
       end
     end
 
