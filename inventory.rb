@@ -20,11 +20,12 @@ class StaticInventory
     end
   end
 
-  def list
+  def config_by_host
+    by_host = []
     @config['hosts'].each do |h|
       next unless hostname = h['hostname']
-      h.keys.each do |attribute|
 
+      h.keys.each do |attribute|
         if h[attribute].nil? && h['environment'] && h['role']
           h[attribute] =
             begin
@@ -33,6 +34,16 @@ class StaticInventory
               next
             end
         end
+      end
+      by_host << h
+    end
+    return by_host
+  end
+
+  def generate
+    self.config_by_host.each do |h|
+      next unless hostname = h['hostname']
+      h.keys.each do |attribute|
 
         next if h[attribute].nil?
 
@@ -40,10 +51,17 @@ class StaticInventory
           @inventory[id] ||= { 'hosts' => [] }
           @inventory[id]['hosts'] << hostname
         end
+
       end
     end
 
   return @inventory
+  end
+
+  def host(hostname)
+    hostvars = self.config_by_host.select { |x| x['hostname'] == hostname }.first || {}
+    hostvars.delete('hostname')
+    return hostvars
   end
 end
 
@@ -53,8 +71,21 @@ OptionParser.new do |opts|
   opts.on("--list", "List hosts") do |o|
     options[:list] = o
   end
+  opts.on("--host HOSTNAME", "Return data for host") do |o|
+    options[:host] = o
+  end
 end.parse!(ARGV)
 
-inv = StaticInventory.new( YAML.load(File.read(File.join(File.dirname(__FILE__), 'inventory.yaml'))) )
-print inv.list.to_json if options[:list]
+data_in = YAML.load(File.read(File.join(File.dirname(__FILE__), 'inventory.yaml')))
+inv = StaticInventory.new(data_in)
+
+if options[:list]
+  print inv.generate.to_json
+  exit
+end
+
+if options[:host]
+  print inv.host(options[:host]).to_json
+  exit
+end
 
