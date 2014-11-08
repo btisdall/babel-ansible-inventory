@@ -7,7 +7,6 @@ require 'optparse'
 class StaticInventory
   def initialize(config)
     @config = config
-    @inventory = {}
   end
 
   def _make_concat_ids(key, val)
@@ -41,6 +40,7 @@ class StaticInventory
   end
 
   def generate
+    inventory = {}
     self.config_by_host.each do |h|
       next unless hostname = h['hostname']
       h.keys.each do |attribute|
@@ -48,14 +48,14 @@ class StaticInventory
         next if h[attribute].nil?
 
         _make_concat_ids(attribute, h[attribute]).each do |id|
-          @inventory[id] ||= { 'hosts' => [] }
-          @inventory[id]['hosts'] << hostname
+          inventory[id] ||= { 'hosts' => [] }
+          inventory[id]['hosts'] << hostname
         end
 
       end
     end
 
-  return @inventory
+  return inventory
   end
 
   def host(hostname)
